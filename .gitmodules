@@ -1,3 +1,9 @@
 [submodule "AI_utility"]
 	path = AI_utility
 	url = https://github.com/JesperJager1986/AI_utility
+[submodule "src/test"]
+	path = src/test
+	url = https://github.com/JesperJager1986/AI_utility
+[submodule "src/ai_utility"]
+	path = src/ai_utility
+	url = https://github.com/JesperJager1986/AI_utility

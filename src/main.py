@@ -13,21 +13,15 @@ if __name__ == '__main__':
     spark = configure_spark_with_delta_pip(builder).getOrCreate()
     print(spark.version)
 
-    # Load CSV file
     csv_path = "/Users/jesperthoftillemannjaeger/PycharmProjects/delta_lake/download/co2_mm_gl.csv"
-    #test = "/Users/jesperthoftillemannjaeger/PycharmProjects/delta_lake/README.md"
-    #df = spark.read.format("csv").option("header", "true").option("inferSchema", "false").load(csv_path)
+    df = spark.read.option("comment", "#").csv(csv_path, header=True, inferSchema="true")
     df.show()
-    df.head(2)
-    # Define Delta table path
     delta_table_path = "/Users/jesperthoftillemannjaeger/PycharmProjects/delta_lake/download/delta_table"
 
-    # Write data as Delta Lake format
     df.write.format("delta").mode("overwrite").save(delta_table_path)
 
     print(f"Delta table created at {delta_table_path}")
 
-    #dt = DeltaTable("../download/co2_mm_gl.csv")
-    dt = DeltaTable("/Users/jesperthoftillemannjaeger/PycharmProjects/delta_lake/download/co2_mm_gl.csv")
-
+    dt = DeltaTable(delta_table_path)
+    df = dt.to_pandas()
     print(2)

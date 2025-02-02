@@ -63,7 +63,27 @@ if __name__ == '__main__':
 
     sparkHandler = Sparkhandler("MyApp")
     spark = sparkHandler.build()
-    new_data_df: DataFrame = sparkHandler.read_csv_to_dataframe(csv_path=str(store_path))
+
+    sample_data = df_data = spark.read.option("comment", "#") \
+    .option("inferSchema", "true") \
+    .option("header", "true") \
+    .csv(str(store_path)) \
+    .limit(5)
+
+    first_row = sample_data.collect()[0] if sample_data.count() > 0 is not None else None
+
+    if first_row is not None:
+        if all(isinstance(first_row, str) for first_row in first_row):
+            header = "true"
+        else:
+            header = "false"
+
+        df_data = spark.read.option("comment", "#") \
+            .option("inferSchema", "true") \
+            .option("header", header) \
+            .csv(str(store_path)) \
+
+    new_data_df: DataFrame = sparkHandler.read_csv_to_dataframe(csv_path=str(store_path) )
 
     if not os.path.exists(delta_table_path):
         print("Delta table does not exist. Creating new Delta table.")
@@ -72,7 +92,7 @@ if __name__ == '__main__':
     else:
         existing_data_df = spark.read.format("delta").load(str(delta_table_path))
 
-        unique_cols = ["year", "month"]  # Change to a relevant column (e.g., timestamp, primary key)
+        unique_cols = ["year", "month"]
 
         new_records_df = new_data_df.join(existing_data_df, on=unique_cols, how="left_anti")
 

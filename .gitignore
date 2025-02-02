@@ -173,3 +173,4 @@ cython_debug/
 *.cvs
 *.lock
 download
+delta_table
